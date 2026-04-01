@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realtime Documents</title>
+</head>
+<body>
+
+<h2>Documents</h2>
+<ul id="docs"></ul>
+
+<script>
+const socket = new WebSocket("ws://127.0.0.1:8000/ws/documents/");
+const list = document.getElementById("docs");
+
+// 🔥 обработка всех сообщений
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === "init") {
+        list.innerHTML = "";
+        data.documents.forEach(addDoc);
+    }
+
+    if (data.type === "new_document") {
+        addDoc(data.document);
+    }
+
+    if (data.type === "update_document") {
+        updateDoc(data.document);
+    }
+
+    if (data.type === "delete_document") {
+        deleteDoc(data.document_id);
+    }
+};
+
+// ➕ добавить
+function addDoc(doc) {
+    const li = document.createElement("li");
+    li.id = "doc-" + doc.id;
+    li.innerText = doc.title + " | " + doc.content;
+    list.appendChild(li);
+}
+
+// ✏️ обновить
+function updateDoc(doc) {
+    const li = document.getElementById("doc-" + doc.id);
+    if (li) {
+        li.innerText = doc.title + " | " + doc.content;
+    }
+}
+
+// ❌ удалить
+function deleteDoc(id) {
+    const li = document.getElementById("doc-" + id);
+    if (li) {
+        li.remove();
+    }
+}
+</script>
+
+</body>
+</html>

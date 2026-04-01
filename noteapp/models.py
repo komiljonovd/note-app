@@ -27,3 +27,7 @@ class DocumentAccess(models.Model):
         db_table = 'DocumentAccess'
         verbose_name = 'Document Access'
         verbose_name_plural = 'Document Access'
+
+    def __str__(self):
+        return f'{self.document.title}' + '  ' + f'{self.user.username}'  
+    
